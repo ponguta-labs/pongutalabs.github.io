@@ -241,7 +241,7 @@
                                 <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                             </div>
                         </div>
-                        <button class="primary-btn mt-6" onclick="showDeliveryAndSummary()">LISTO</button>
+                        <button class="primary-btn mt-6" onclick="showDeliveryAndSummary(this)">LISTO</button>
                     </div>
                 </div>
             </div>
@@ -326,7 +326,7 @@
                                 <button class="quantity-btn" onclick="updateQuantity(this, 1)">+</button>
                             </div>
                         </div>
-                        <button class="primary-btn mt-6" onclick="showDeliveryAndSummary()">LISTO</button>
+                        <button class="primary-btn mt-6" onclick="showDeliveryAndSummary(this)">LISTO</button>
                     </div>
                 </div>
             </div>
@@ -397,7 +397,7 @@
             }
         }
         
-        function showDeliveryAndSummary() {
+        function showDeliveryAndSummary(button) {
             const deliveryForm = document.getElementById('deliveryForm');
             const orderSummary = document.getElementById('orderSummary');
 
@@ -414,8 +414,18 @@
             });
 
             if (hasItems) {
+                // Collapse the current section
+                const categoryCard = button.closest('.category-card');
+                const headerButton = categoryCard.querySelector('.collapsible-header');
+                toggleSection(headerButton);
+
+                // Show the delivery and summary sections
                 deliveryForm.classList.remove('hidden');
                 orderSummary.classList.remove('hidden');
+
+                // Scroll to the delivery form section
+                deliveryForm.scrollIntoView({ behavior: 'smooth' });
+
             } else {
                 // If no items are selected, show a message
                 openModalWithMessage('No has seleccionado ningún producto. Por favor, agrega al menos uno a tu pedido.');
@@ -446,10 +456,14 @@
                     totalCost += itemTotal;
 
                     summaryContent += `
-                        <div class="summary-item">
-                            <span class="text-sm">${productName}</span>
-                            <span class="text-sm">x${quantity}</span>
-                            <span class="text-sm font-semibold">$${itemTotal.toLocaleString('es-CO')}</span>
+                        <div class="summary-item flex-col items-start">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-sm">${productName}</span>
+                                <span class="text-sm font-semibold">$${itemTotal.toLocaleString('es-CO')}</span>
+                            </div>
+                            <div class="w-full text-right text-xs text-gray-500 mt-1">
+                                <span class="text-sm">$${price.toLocaleString('es-CO')} c/u x ${quantity}</span>
+                            </div>
                         </div>
                     `;
                 }
@@ -493,10 +507,14 @@
 
                     orderSummaryText += `* ${product}${flavor}: ${quantity} uni. ($${itemTotal.toLocaleString('es-CO')})\n`;
                     summaryHtml += `
-                        <div class="summary-item">
-                            <span class="text-sm">${product}${flavor}</span>
-                            <span class="text-sm">x${quantity}</span>
-                            <span class="text-sm font-semibold">$${itemTotal.toLocaleString('es-CO')}</span>
+                        <div class="summary-item flex-col items-start">
+                            <div class="w-full flex justify-between items-center">
+                                <span class="text-sm">${product}${flavor}</span>
+                                <span class="text-sm font-semibold">$${itemTotal.toLocaleString('es-CO')}</span>
+                            </div>
+                            <div class="w-full text-right text-xs text-gray-500 mt-1">
+                                <span class="text-sm">$${price.toLocaleString('es-CO')} c/u x ${quantity}</span>
+                            </div>
                         </div>
                     `;
                     hasItems = true;
